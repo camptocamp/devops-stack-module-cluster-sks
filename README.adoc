@@ -1,1 +1,14 @@
 = devops-stack-module-cluster-sks
+
+
+Note that security group is created here and we do not support an external security group yet. 
+
+
+// TODO Quote the following block from the official documentation
+// annotations:
+//   # Uncomment if you want to use an already existing Exoscale LoadBalancer
+//   #service.beta.kubernetes.io/exoscale-loadbalancer-id: "09191de9-513b-4270-a44c-5aad8354bb47"
+//   #service.beta.kubernetes.io/exoscale-loadbalancer-external: "true"
+//   # When having multiple Nodepools attached to your SKS Cluster,
+//   # you need to specify then the ID of the underlying Instance Pool the NLB should forward traffic to
+//   #service.beta.kubernetes.io/exoscale-loadbalancer-service-instancepool-id: "F0D7A23E-14B8-4A6E-A134-1BFD0DF9A068"
