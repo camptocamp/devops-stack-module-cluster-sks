@@ -12,3 +12,304 @@ Note that security group is created here and we do not support an external secur
 //   # When having multiple Nodepools attached to your SKS Cluster,
 //   # you need to specify then the ID of the underlying Instance Pool the NLB should forward traffic to
 //   #service.beta.kubernetes.io/exoscale-loadbalancer-service-instancepool-id: "F0D7A23E-14B8-4A6E-A134-1BFD0DF9A068"
+
+// BEGIN_TF_DOCS
+=== Requirements
+
+The following requirements are needed by this module:
+
+- [[requirement_terraform]] <<requirement_terraform,terraform>> (>= 1.0)
+
+- [[requirement_exoscale]] <<requirement_exoscale,exoscale>> (>= 0.47)
+
+- [[requirement_external]] <<requirement_external,external>> (>= 2.1)
+
+- [[requirement_null]] <<requirement_null,null>> (>= 3.1)
+
+=== Providers
+
+The following providers are used by this module:
+
+- [[provider_exoscale]] <<provider_exoscale,exoscale>> (>= 0.47)
+
+- [[provider_local]] <<provider_local,local>>
+
+=== Resources
+
+The following resources are used by this module:
+
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/anti_affinity_group[exoscale_anti_affinity_group.this] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain[exoscale_domain.this] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_long] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_short] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/nlb[exoscale_nlb.this] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.calico_traffic] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.http] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.https] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.nodeport_tcp_services] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.nodeport_udp_services] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.sks_logs] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_cluster[exoscale_sks_cluster.this] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[exoscale_sks_kubeconfig.this] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[exoscale_sks_nodepool.this] (resource)
+- https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file[local_sensitive_file.sks_kubeconfig_file] (resource)
+
+=== Required Inputs
+
+The following input variables are required:
+
+==== [[input_cluster_name]] <<input_cluster_name,cluster_name>>
+
+Description: The name of the Kubernetes cluster to create.
+
+Type: `string`
+
+==== [[input_cluster_zone]] <<input_cluster_zone,cluster_zone>>
+
+Description: The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here].
+
+Type: `string`
+
+==== [[input_cluster_version]] <<input_cluster_version,cluster_version>>
+
+Description: Kubernetes version to use for the SKS cluster. See `exo compute sks versions` for reference. May only be set at creation time.
+
+Type: `string`
+
+=== Optional Inputs
+
+The following input variables are optional (have default values):
+
+==== [[input_base_domain]] <<input_base_domain,base_domain>>
+
+Description: The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
+
+Type: `string`
+
+Default: `null`
+
+==== [[input_cluster_auto_upgrade]] <<input_cluster_auto_upgrade,cluster_auto_upgrade>>
+
+Description: Enable automatic upgrade of the SKS cluster.
+
+Type: `bool`
+
+Default: `false`
+
+==== [[input_service_level]] <<input_service_level,service_level>>
+
+Description: Choose the service level for the SKS cluster. _Starter_ can be used for test and development purposes, _Pro_ is recommended for production workloads. The official documentation is available https://community.exoscale.com/documentation/sks/overview/#pricing-tiers[here].
+
+Type: `string`
+
+Default: `"pro"`
+
+==== [[input_nodepools]] <<input_nodepools,nodepools>>
+
+Description: Map containing the SKS node pools to create.  
+
+Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.   
+The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
+
+Type: `map(any)`
+
+Default: `null`
+
+==== [[input_tcp_node_ports_world_accessible]] <<input_tcp_node_ports_world_accessible,tcp_node_ports_world_accessible>>
+
+Description: Create a security group rule that allows world access to to NodePort TCP services. Recommended to leave open as per https://community.exoscale.com/documentation/sks/quick-start/#creating-a-cluster-from-the-cli[SKS documentation].
+
+Type: `bool`
+
+Default: `true`
+
+==== [[input_udp_node_ports_world_accessible]] <<input_udp_node_ports_world_accessible,udp_node_ports_world_accessible>>
+
+Description: Create a security group rule that allows world access to to NodePort UDP services.
+
+Type: `bool`
+
+Default: `false`
+
+=== Outputs
+
+The following outputs are exported:
+
+==== [[output_cluster_name]] <<output_cluster_name,cluster_name>>
+
+Description: Name of the SKS cluster.
+
+==== [[output_base_domain]] <<output_base_domain,base_domain>>
+
+Description: The base domain for the SKS cluster.
+
+==== [[output_nlb_ip_address]] <<output_nlb_ip_address,nlb_ip_address>>
+
+Description: IP address of the Network Load Balancer.
+
+==== [[output_nlb_id]] <<output_nlb_id,nlb_id>>
+
+Description: ID of the Network Load Balancer.
+
+==== [[output_router_nodepool_id]] <<output_router_nodepool_id,router_nodepool_id>>
+
+Description: ID of the node pool specifically created for Traefik.
+
+==== [[output_router_instance_pool_id]] <<output_router_instance_pool_id,router_instance_pool_id>>
+
+Description: Instance pool ID of the node pool specifically created for Traefik.
+
+==== [[output_cluster_security_group_id]] <<output_cluster_security_group_id,cluster_security_group_id>>
+
+Description: Security group ID attached to the SKS nodepool instances.
+
+==== [[output_kubernetes_host]] <<output_kubernetes_host,kubernetes_host>>
+
+Description: Endpoint for your Kubernetes API server.
+
+==== [[output_kubernetes_cluster_ca_certificate]] <<output_kubernetes_cluster_ca_certificate,kubernetes_cluster_ca_certificate>>
+
+Description: Certificate Authority required to communicate with the cluster.
+
+==== [[output_kubernetes_client_key]] <<output_kubernetes_client_key,kubernetes_client_key>>
+
+Description: Certificate Client Key required to communicate with the cluster.
+
+==== [[output_kubernetes_client_certificate]] <<output_kubernetes_client_certificate,kubernetes_client_certificate>>
+
+Description: Certificate Client Certificate required to communicate with the cluster.
+
+==== [[output_raw_kubeconfig]] <<output_raw_kubeconfig,raw_kubeconfig>>
+
+Description: Raw `.kube/config` file for `kubectl` access.
+// END_TF_DOCS
+// BEGIN_TF_TABLES
+= Requirements
+
+[cols="a,a",options="header,autowidth"]
+|===
+|Name |Version
+|[[requirement_terraform]] <<requirement_terraform,terraform>> |>= 1.0
+|[[requirement_exoscale]] <<requirement_exoscale,exoscale>> |>= 0.47
+|[[requirement_external]] <<requirement_external,external>> |>= 2.1
+|[[requirement_null]] <<requirement_null,null>> |>= 3.1
+|===
+
+= Providers
+
+[cols="a,a",options="header,autowidth"]
+|===
+|Name |Version
+|[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.47
+|[[provider_local]] <<provider_local,local>> |n/a
+|===
+
+= Resources
+
+[cols="a,a",options="header,autowidth"]
+|===
+|Name |Type
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/anti_affinity_group[exoscale_anti_affinity_group.this] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain[exoscale_domain.this] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_long] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_short] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/nlb[exoscale_nlb.this] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.calico_traffic] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.http] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.https] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.nodeport_tcp_services] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.nodeport_udp_services] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.sks_logs] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_cluster[exoscale_sks_cluster.this] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[exoscale_sks_kubeconfig.this] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[exoscale_sks_nodepool.this] |resource
+|https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file[local_sensitive_file.sks_kubeconfig_file] |resource
+|===
+
+= Inputs
+
+[cols="a,a,a,a,a",options="header,autowidth"]
+|===
+|Name |Description |Type |Default |Required
+|[[input_cluster_name]] <<input_cluster_name,cluster_name>>
+|The name of the Kubernetes cluster to create.
+|`string`
+|n/a
+|yes
+
+|[[input_base_domain]] <<input_base_domain,base_domain>>
+|The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
+|`string`
+|`null`
+|no
+
+|[[input_cluster_zone]] <<input_cluster_zone,cluster_zone>>
+|The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here].
+|`string`
+|n/a
+|yes
+
+|[[input_cluster_version]] <<input_cluster_version,cluster_version>>
+|Kubernetes version to use for the SKS cluster. See `exo compute sks versions` for reference. May only be set at creation time.
+|`string`
+|n/a
+|yes
+
+|[[input_cluster_auto_upgrade]] <<input_cluster_auto_upgrade,cluster_auto_upgrade>>
+|Enable automatic upgrade of the SKS cluster.
+|`bool`
+|`false`
+|no
+
+|[[input_service_level]] <<input_service_level,service_level>>
+|Choose the service level for the SKS cluster. _Starter_ can be used for test and development purposes, _Pro_ is recommended for production workloads. The official documentation is available https://community.exoscale.com/documentation/sks/overview/#pricing-tiers[here].
+|`string`
+|`"pro"`
+|no
+
+|[[input_nodepools]] <<input_nodepools,nodepools>>
+|Map containing the SKS node pools to create.
+Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.
+The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
+
+|`map(any)`
+|`null`
+|no
+
+|[[input_tcp_node_ports_world_accessible]] <<input_tcp_node_ports_world_accessible,tcp_node_ports_world_accessible>>
+|Create a security group rule that allows world access to to NodePort TCP services. Recommended to leave open as per https://community.exoscale.com/documentation/sks/quick-start/#creating-a-cluster-from-the-cli[SKS documentation].
+|`bool`
+|`true`
+|no
+
+|[[input_udp_node_ports_world_accessible]] <<input_udp_node_ports_world_accessible,udp_node_ports_world_accessible>>
+|Create a security group rule that allows world access to to NodePort UDP services.
+|`bool`
+|`false`
+|no
+
+|===
+
+= Outputs
+
+[cols="a,a",options="header,autowidth"]
+|===
+|Name |Description
+|[[output_cluster_name]] <<output_cluster_name,cluster_name>> |Name of the SKS cluster.
+|[[output_base_domain]] <<output_base_domain,base_domain>> |The base domain for the SKS cluster.
+|[[output_nlb_ip_address]] <<output_nlb_ip_address,nlb_ip_address>> |IP address of the Network Load Balancer.
+|[[output_nlb_id]] <<output_nlb_id,nlb_id>> |ID of the Network Load Balancer.
+|[[output_router_nodepool_id]] <<output_router_nodepool_id,router_nodepool_id>> |ID of the node pool specifically created for Traefik.
+|[[output_router_instance_pool_id]] <<output_router_instance_pool_id,router_instance_pool_id>> |Instance pool ID of the node pool specifically created for Traefik.
+|[[output_cluster_security_group_id]] <<output_cluster_security_group_id,cluster_security_group_id>> |Security group ID attached to the SKS nodepool instances.
+|[[output_kubernetes_host]] <<output_kubernetes_host,kubernetes_host>> |Endpoint for your Kubernetes API server.
+|[[output_kubernetes_cluster_ca_certificate]] <<output_kubernetes_cluster_ca_certificate,kubernetes_cluster_ca_certificate>> |Certificate Authority required to communicate with the cluster.
+|[[output_kubernetes_client_key]] <<output_kubernetes_client_key,kubernetes_client_key>> |Certificate Client Key required to communicate with the cluster.
+|[[output_kubernetes_client_certificate]] <<output_kubernetes_client_certificate,kubernetes_client_certificate>> |Certificate Client Certificate required to communicate with the cluster.
+|[[output_raw_kubeconfig]] <<output_raw_kubeconfig,raw_kubeconfig>> |Raw `.kube/config` file for `kubectl` access.
+|===
+// END_TF_TABLES
