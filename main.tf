@@ -41,11 +41,10 @@ resource "exoscale_sks_kubeconfig" "this" {
   cluster_id = resource.exoscale_sks_cluster.this.id
   zone       = resource.exoscale_sks_cluster.this.zone
 
-  # TODO Review the user and groups values (for now, we use the same values as in the official SKS example)
+  # User and groups values are the same values as in the official SKS example
   user   = "kubernetes-admin"
   groups = ["system:masters"]
 
-  # TODO Consider variabilizing this if needed, but I do not think so, as this kubeconfig will only be needed every time a Terraform operation is performed
   # Define a lifetime for the generated kubeconfig file
   ttl_seconds           = 3600 # 1 hour
   early_renewal_seconds = 1800 # 30 minutes
@@ -57,4 +56,4 @@ resource "local_sensitive_file" "sks_kubeconfig_file" {
   file_permission = "0600"
 }
 
-# TODO Maybe add wait resource that existed in our SKS cluster module although from my tests I do not think it is needed
+# TODO Maybe add wait resource that existed in our SKS cluster module although from my tests I do not think it is needed. Either way the bootstrap Argo CD will wait until there is a first node available to start being deployed, which takes usually 2-3 minutes and that is well withing the timeout defined in the bootstrap Argo CD module.

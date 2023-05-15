@@ -4,7 +4,7 @@ variable "cluster_name" {
 }
 
 variable "base_domain" {
-  description = "The base domain used for Ingresses."
+  description = "The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address."
   type        = string
   default     = null
 }
@@ -41,12 +41,6 @@ variable "nodepools" {
   type        = map(any) # TODO Add validation with the structure of the object instead of using a map of any although I do not see yet how this can work with the lookup function in the nodepool
   default     = null
 }
-
-# variable "router_nodepool" {
-#   description = "Name of the nodes to attach the NLB to. Needs to be one of the names passed on the variable `nodepools`."
-#   type        = string
-#   default     = null
-# }
 
 variable "tcp_node_ports_world_accessible" {
   description = "Create a security group rule that allows world access to to NodePort TCP services. Recommended to leave open as per https://community.exoscale.com/documentation/sks/quick-start/#creating-a-cluster-from-the-cli[SKS documentation]."

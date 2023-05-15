@@ -61,7 +61,7 @@ resource "exoscale_security_group_rule" "nodeport_udp_services" {
 
 resource "exoscale_security_group_rule" "http" {
   security_group_id = resource.exoscale_security_group.this.id
-  description       = "TODO" # TODO
+  description       = "Allow incoming HTTP traffic from the outside world."
   type              = "INGRESS"
   protocol          = "TCP"
   cidr              = "0.0.0.0/0"
@@ -71,7 +71,7 @@ resource "exoscale_security_group_rule" "http" {
 
 resource "exoscale_security_group_rule" "https" {
   security_group_id = resource.exoscale_security_group.this.id
-  description       = "TODO" # TODO
+  description       = "Allow incoming HTTP traffic from the outside world."
   type              = "INGRESS"
   protocol          = "TCP"
   cidr              = "0.0.0.0/0"
