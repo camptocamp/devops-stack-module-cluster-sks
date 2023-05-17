@@ -84,13 +84,13 @@ Description: The name of the Kubernetes cluster to create.
 
 Type: `string`
 
-==== [[input_cluster_zone]] <<input_cluster_zone,cluster_zone>>
+==== [[input_zone]] <<input_zone,zone>>
 
 Description: The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here].
 
 Type: `string`
 
-==== [[input_cluster_version]] <<input_cluster_version,cluster_version>>
+==== [[input_kubernetes_version]] <<input_kubernetes_version,kubernetes_version>>
 
 Description: Kubernetes version to use for the SKS cluster. See `exo compute sks versions` for reference. May only be set at creation time.
 
@@ -108,7 +108,7 @@ Type: `string`
 
 Default: `null`
 
-==== [[input_cluster_auto_upgrade]] <<input_cluster_auto_upgrade,cluster_auto_upgrade>>
+==== [[input_auto_upgrade]] <<input_auto_upgrade,auto_upgrade>>
 
 Description: Enable automatic upgrade of the SKS cluster.
 
@@ -220,8 +220,8 @@ Description: Raw `.kube/config` file for `kubectl` access.
 [cols="a,a",options="header,autowidth"]
 |===
 |Name |Version
-|[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.47
 |[[provider_local]] <<provider_local,local>> |n/a
+|[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.47
 |===
 
 = Resources
@@ -265,19 +265,19 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |`null`
 |no
 
-|[[input_cluster_zone]] <<input_cluster_zone,cluster_zone>>
+|[[input_zone]] <<input_zone,zone>>
 |The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here].
 |`string`
 |n/a
 |yes
 
-|[[input_cluster_version]] <<input_cluster_version,cluster_version>>
+|[[input_kubernetes_version]] <<input_kubernetes_version,kubernetes_version>>
 |Kubernetes version to use for the SKS cluster. See `exo compute sks versions` for reference. May only be set at creation time.
 |`string`
 |n/a
 |yes
 
-|[[input_cluster_auto_upgrade]] <<input_cluster_auto_upgrade,cluster_auto_upgrade>>
+|[[input_auto_upgrade]] <<input_auto_upgrade,auto_upgrade>>
 |Enable automatic upgrade of the SKS cluster.
 |`bool`
 |`false`
