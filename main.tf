@@ -1,13 +1,13 @@
 resource "exoscale_nlb" "this" {
-  zone = var.cluster_zone
+  zone = var.zone
   name = format("ingress-%s", var.cluster_name)
 }
 
 resource "exoscale_sks_cluster" "this" {
-  zone          = var.cluster_zone
+  zone          = var.zone
   name          = var.cluster_name
-  version       = var.cluster_version
-  auto_upgrade  = var.cluster_auto_upgrade
+  version       = var.kubernetes_version
+  auto_upgrade  = var.auto_upgrade
   service_level = var.service_level
 }
 
@@ -21,7 +21,7 @@ resource "exoscale_anti_affinity_group" "this" {
 resource "exoscale_sks_nodepool" "this" {
   for_each = local.nodepools
 
-  zone            = var.cluster_zone
+  zone            = var.zone
   cluster_id      = resource.exoscale_sks_cluster.this.id
   name            = each.key
   description     = lookup(each.value, "description", "")

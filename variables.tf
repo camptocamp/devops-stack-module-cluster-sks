@@ -9,17 +9,17 @@ variable "base_domain" {
   default     = null
 }
 
-variable "cluster_zone" {
+variable "zone" {
   description = "The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here]."
   type        = string
 }
 
-variable "cluster_version" {
+variable "kubernetes_version" {
   description = "Kubernetes version to use for the SKS cluster. See `exo compute sks versions` for reference. May only be set at creation time."
   type        = string
 }
 
-variable "cluster_auto_upgrade" {
+variable "auto_upgrade" {
   description = "Enable automatic upgrade of the SKS cluster."
   type        = bool
   default     = false
