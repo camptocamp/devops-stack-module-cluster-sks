@@ -9,6 +9,12 @@ variable "base_domain" {
   default     = null
 }
 
+variable "domain_id" {
+  description = "The ID of the domain created on the caller module. *If the `base_domain` variable is provided, this variable is also required.*"
+  type        = string
+  default     = null
+}
+
 variable "zone" {
   description = "The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here]."
   type        = string
