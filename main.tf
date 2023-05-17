@@ -1,8 +1,3 @@
-resource "exoscale_nlb" "this" {
-  zone = var.zone
-  name = format("ingress-%s", var.cluster_name)
-}
-
 resource "exoscale_sks_cluster" "this" {
   zone          = var.zone
   name          = var.cluster_name
