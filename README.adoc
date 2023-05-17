@@ -57,9 +57,7 @@ The following providers are used by this module:
 The following resources are used by this module:
 
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/anti_affinity_group[exoscale_anti_affinity_group.this] (resource)
-- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain[exoscale_domain.this] (resource)
-- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_long] (resource)
-- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_short] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_colorized] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/nlb[exoscale_nlb.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] (resource)
@@ -73,6 +71,7 @@ The following resources are used by this module:
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[exoscale_sks_kubeconfig.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[exoscale_sks_nodepool.this] (resource)
 - https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file[local_sensitive_file.sks_kubeconfig_file] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/data-sources/domain[exoscale_domain.this] (data source)
 
 === Required Inputs
 
@@ -220,8 +219,8 @@ Description: Raw `.kube/config` file for `kubectl` access.
 [cols="a,a",options="header,autowidth"]
 |===
 |Name |Version
-|[[provider_local]] <<provider_local,local>> |n/a
 |[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.47
+|[[provider_local]] <<provider_local,local>> |n/a
 |===
 
 = Resources
@@ -230,9 +229,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |===
 |Name |Type
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/anti_affinity_group[exoscale_anti_affinity_group.this] |resource
-|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain[exoscale_domain.this] |resource
-|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_long] |resource
-|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_short] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_colorized] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/nlb[exoscale_nlb.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] |resource
@@ -246,6 +243,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[exoscale_sks_kubeconfig.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[exoscale_sks_nodepool.this] |resource
 |https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file[local_sensitive_file.sks_kubeconfig_file] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/data-sources/domain[exoscale_domain.this] |data source
 |===
 
 = Inputs
