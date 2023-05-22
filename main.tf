@@ -41,8 +41,8 @@ resource "exoscale_sks_kubeconfig" "this" {
   groups = ["system:masters"]
 
   # Define a lifetime for the generated kubeconfig file
-  ttl_seconds           = 3600 # 1 hour
-  early_renewal_seconds = 1800 # 30 minutes
+  ttl_seconds           = 259200 # 72 hours
+  early_renewal_seconds = 86400  # 24 hours
 }
 
 resource "local_sensitive_file" "sks_kubeconfig_file" {
