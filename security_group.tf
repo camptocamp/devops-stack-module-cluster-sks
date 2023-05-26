@@ -14,7 +14,7 @@ resource "exoscale_security_group_rule" "sks_logs" {
 }
 
 resource "exoscale_security_group_rule" "calico_traffic" {
-  count = var.cilium_enabled ? 0 : 1
+  count = var.cni == "calico" ? 1 : 0
 
   security_group_id      = resource.exoscale_security_group.this.id
   user_security_group_id = resource.exoscale_security_group.this.id
@@ -26,7 +26,7 @@ resource "exoscale_security_group_rule" "calico_traffic" {
 }
 
 resource "exoscale_security_group_rule" "cilium_traffic" {
-  count = var.cilium_enabled ? 1 : 0
+  count = var.cni == "cilium" ? 1 : 0
 
   security_group_id      = resource.exoscale_security_group.this.id
   user_security_group_id = resource.exoscale_security_group.this.id
@@ -38,7 +38,7 @@ resource "exoscale_security_group_rule" "cilium_traffic" {
 }
 
 resource "exoscale_security_group_rule" "cilium_health_check" {
-  count = var.cilium_enabled ? 1 : 0
+  count = var.cni == "cilium" ? 1 : 0
 
   security_group_id      = resource.exoscale_security_group.this.id
   user_security_group_id = resource.exoscale_security_group.this.id
@@ -50,7 +50,7 @@ resource "exoscale_security_group_rule" "cilium_health_check" {
 }
 
 resource "exoscale_security_group_rule" "cilium_health_check_icmp" {
-  count = var.cilium_enabled ? 1 : 0
+  count = var.cni == "cilium" ? 1 : 0
 
   security_group_id      = resource.exoscale_security_group.this.id
   user_security_group_id = resource.exoscale_security_group.this.id
