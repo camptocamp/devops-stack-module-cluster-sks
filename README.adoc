@@ -67,6 +67,9 @@ The following resources are used by this module:
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.calico_traffic] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.cilium_health_check] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.cilium_health_check_icmp] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.cilium_traffic] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.http] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.https] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.nodeport_tcp_services] (resource)
@@ -162,6 +165,14 @@ Type: `bool`
 
 Default: `false`
 
+==== [[input_cilium_enabled]] <<input_cilium_enabled,cilium_enabled>>
+
+Description: Enable Cilium as the CNI plugin for the cluster.
+
+Type: `bool`
+
+Default: `false`
+
 === Outputs
 
 The following outputs are exported:
@@ -246,6 +257,9 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.calico_traffic] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.cilium_health_check] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.cilium_health_check_icmp] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.cilium_traffic] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.http] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.https] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.nodeport_tcp_services] |resource
@@ -321,6 +335,12 @@ The other keys are optional: `description`, `instance_prefix`, `disk_size`, `lab
 
 |[[input_udp_node_ports_world_accessible]] <<input_udp_node_ports_world_accessible,udp_node_ports_world_accessible>>
 |Create a security group rule that allows world access to to NodePort UDP services.
+|`bool`
+|`false`
+|no
+
+|[[input_cilium_enabled]] <<input_cilium_enabled,cilium_enabled>>
+|Enable Cilium as the CNI plugin for the cluster.
 |`bool`
 |`false`
 |no
