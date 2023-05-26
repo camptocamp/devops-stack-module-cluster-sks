@@ -13,6 +13,11 @@
 // This module needs a DNS Subscription in the same Exoscale account to create a wildcard CNAME record that points to the NLB. The DNS zone to be created must be passed in the `base_domain` variable. This record is used by other DevOps Stack modules as default URLs for their applications.
 
 
+// Require at least a 3 node main pool where to deploy longhorn replicas.
+
+// Add documentation about cilium as CNI
+
+
 // Note that security group is created here and we do not support an external security group yet. 
 
 

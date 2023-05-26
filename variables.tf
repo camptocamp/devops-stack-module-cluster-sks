@@ -59,3 +59,9 @@ variable "udp_node_ports_world_accessible" {
   type        = bool
   default     = false
 }
+
+variable "cilium_enabled" {
+  description = "Enable Cilium as the CNI plugin for the cluster."
+  type        = bool
+  default     = false
+}

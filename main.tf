@@ -4,6 +4,7 @@ resource "exoscale_sks_cluster" "this" {
   version       = var.kubernetes_version
   auto_upgrade  = var.auto_upgrade
   service_level = var.service_level
+  cni           = var.cilium_enabled ? "cilium" : "calico"
 }
 
 resource "exoscale_anti_affinity_group" "this" {
