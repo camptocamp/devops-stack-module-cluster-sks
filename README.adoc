@@ -165,13 +165,13 @@ Type: `bool`
 
 Default: `false`
 
-==== [[input_cilium_enabled]] <<input_cilium_enabled,cilium_enabled>>
+==== [[input_cni]] <<input_cni,cni>>
 
-Description: Enable Cilium as the CNI plugin for the cluster.
+Description: Specify which CNI to use by default. Accepted values are `calico` or `cilium`.
 
-Type: `bool`
+Type: `string`
 
-Default: `false`
+Default: `"cilium"`
 
 === Outputs
 
@@ -339,10 +339,10 @@ The other keys are optional: `description`, `instance_prefix`, `disk_size`, `lab
 |`false`
 |no
 
-|[[input_cilium_enabled]] <<input_cilium_enabled,cilium_enabled>>
-|Enable Cilium as the CNI plugin for the cluster.
-|`bool`
-|`false`
+|[[input_cni]] <<input_cni,cni>>
+|Specify which CNI to use by default. Accepted values are `calico` or `cilium`.
+|`string`
+|`"cilium"`
 |no
 
 |===
