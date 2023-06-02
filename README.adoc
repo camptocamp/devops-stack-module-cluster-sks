@@ -53,16 +53,16 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- [[provider_local]] <<provider_local,local>>
-
 - [[provider_exoscale]] <<provider_exoscale,exoscale>> (>= 0.47)
+
+- [[provider_local]] <<provider_local,local>>
 
 === Resources
 
 The following resources are used by this module:
 
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/anti_affinity_group[exoscale_anti_affinity_group.this] (resource)
-- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_colorized] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_with_cluster_name] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/nlb[exoscale_nlb.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] (resource)
@@ -79,6 +79,7 @@ The following resources are used by this module:
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[exoscale_sks_kubeconfig.this] (resource)
 - https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[exoscale_sks_nodepool.this] (resource)
 - https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file[local_sensitive_file.sks_kubeconfig_file] (resource)
+- https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/data-sources/domain[exoscale_domain.this] (data source)
 
 === Required Inputs
 
@@ -109,14 +110,6 @@ The following input variables are optional (have default values):
 ==== [[input_base_domain]] <<input_base_domain,base_domain>>
 
 Description: The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
-
-Type: `string`
-
-Default: `null`
-
-==== [[input_domain_id]] <<input_domain_id,domain_id>>
-
-Description: The ID of the domain created on the caller module. *If the `base_domain` variable is provided, this variable is also required.*
 
 Type: `string`
 
@@ -242,8 +235,8 @@ Description: Raw `.kube/config` file for `kubectl` access.
 [cols="a,a",options="header,autowidth"]
 |===
 |Name |Version
-|[[provider_local]] <<provider_local,local>> |n/a
 |[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.47
+|[[provider_local]] <<provider_local,local>> |n/a
 |===
 
 = Resources
@@ -252,7 +245,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |===
 |Name |Type
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/anti_affinity_group[exoscale_anti_affinity_group.this] |resource
-|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_colorized] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/domain_record[exoscale_domain_record.wildcard_with_cluster_name] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/nlb[exoscale_nlb.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group[exoscale_security_group.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/security_group_rule[exoscale_security_group_rule.all] |resource
@@ -269,6 +262,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[exoscale_sks_kubeconfig.this] |resource
 |https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[exoscale_sks_nodepool.this] |resource
 |https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/sensitive_file[local_sensitive_file.sks_kubeconfig_file] |resource
+|https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/data-sources/domain[exoscale_domain.this] |data source
 |===
 
 = Inputs
@@ -284,12 +278,6 @@ Description: Raw `.kube/config` file for `kubectl` access.
 
 |[[input_base_domain]] <<input_base_domain,base_domain>>
 |The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
-|`string`
-|`null`
-|no
-
-|[[input_domain_id]] <<input_domain_id,domain_id>>
-|The ID of the domain created on the caller module. *If the `base_domain` variable is provided, this variable is also required.*
 |`string`
 |`null`
 |no
