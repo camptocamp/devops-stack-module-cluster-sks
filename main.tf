@@ -48,8 +48,65 @@ resource "exoscale_sks_kubeconfig" "this" {
 
 resource "local_sensitive_file" "sks_kubeconfig_file" {
   filename        = "${var.cluster_name}-config"
-  content         = exoscale_sks_kubeconfig.this.kubeconfig
+  content         = resource.exoscale_sks_kubeconfig.this.kubeconfig
   file_permission = "0600"
 }
 
-# TODO Maybe add wait resource that existed in our SKS cluster module although from my tests I do not think it is needed. Either way the bootstrap Argo CD will wait until there is a first node available to start being deployed, which takes usually 2-3 minutes and that is well withing the timeout defined in the bootstrap Argo CD module.
+# TODO Add comment here explaining the reason for this resource and that it needs to have the kubernetes provider configured on the caller module
+resource "kubernetes_config_map_v1_data" "coredns_configmap_overload" {
+  metadata {
+    name      = "coredns"
+    namespace = "kube-system"
+  }
+
+  force = true
+
+  data = {
+    Corefile = <<-EOF
+    .:53 {
+        log
+        errors
+        health {
+          lameduck 5s
+        }
+        ready
+        kubernetes ${resource.exoscale_sks_cluster.this.id}.cluster.local cluster.local in-addr.arpa ip6.arpa {
+          pods verified
+          fallthrough in-addr.arpa ip6.arpa
+        }
+        forward . /etc/resolv.conf
+        prometheus :9153
+        cache 300
+        loop
+        reload
+        loadbalance
+    }
+    EOF
+  }
+}
+
+data "kubernetes_config_map" "coredns_configmap" {
+  metadata {
+    name      = "coredns"
+    namespace = "kube-system"
+  }
+  depends_on = [
+    resource.kubernetes_config_map_v1_data.coredns_configmap_overload,
+    resource.exoscale_sks_cluster.this,
+  ]
+}
+
+# TODO Document the need to have kubectl working and installed
+resource "null_resource" "coredns_restart" {
+  depends_on = [
+    resource.kubernetes_config_map_v1_data.coredns_configmap_overload
+  ]
+  triggers = {
+    coredns_configmap_hash = data.kubernetes_config_map.coredns_configmap.metadata[0].annotations["kubectl.kubernetes.io/last-applied-configuration"]
+  }
+  provisioner "local-exec" {
+    command = <<-EOT
+      kubectl --kubeconfig="${var.cluster_name}-config" delete pod $(kubectl --kubeconfig="${var.cluster_name}-config" get pods -n kube-system | grep coredns | cut -d ' ' -f 1) -n kube-system
+    EOT
+  }
+}
