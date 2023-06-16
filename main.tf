@@ -91,18 +91,19 @@ data "kubernetes_config_map" "coredns_configmap" {
     namespace = "kube-system"
   }
   depends_on = [
+    resource.exoscale_sks_kubeconfig.this,
     resource.kubernetes_config_map_v1_data.coredns_configmap_overload,
-    resource.exoscale_sks_cluster.this,
   ]
 }
 
 # TODO Document the need to have kubectl working and installed
 resource "null_resource" "coredns_restart" {
   depends_on = [
+    resource.exoscale_sks_kubeconfig.this,
     resource.kubernetes_config_map_v1_data.coredns_configmap_overload
   ]
   triggers = {
-    coredns_configmap_hash = data.kubernetes_config_map.coredns_configmap.metadata[0].annotations["kubectl.kubernetes.io/last-applied-configuration"]
+    coredns_configmap_uid = data.kubernetes_config_map.coredns_configmap.metadata[0].uid
   }
   provisioner "local-exec" {
     command = <<-EOT
