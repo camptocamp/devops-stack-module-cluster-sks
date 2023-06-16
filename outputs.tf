@@ -8,6 +8,11 @@ output "base_domain" {
   value       = local.base_domain
 }
 
+output "cluster_id" {
+  description = "ID of the SKS cluster."
+  value = resource.exoscale_sks_cluster.this.id
+}
+
 output "nlb_ip_address" {
   description = "IP address of the Network Load Balancer."
   value       = resource.exoscale_nlb.this.ip_address

@@ -8,7 +8,7 @@
 // TODO Test the auto-upgrade feature
 // TODO Add documentation about that
 
-
+// TODO Add documentation about the importance of passing the cluster ID to the Thanos and Loki modules
 
 // This module needs a DNS Subscription in the same Exoscale account to create a wildcard CNAME record that points to the NLB. The DNS zone to be created must be passed in the `base_domain` variable. This record is used by other DevOps Stack modules as default URLs for their applications.
 
