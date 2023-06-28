@@ -71,7 +71,6 @@ resource "exoscale_security_group_rule" "all" {
   end_port               = 65535
 }
 
-# TODO Review why we need to allow access to node ports from the world
 resource "exoscale_security_group_rule" "nodeport_tcp_services" {
   count = var.tcp_node_ports_world_accessible ? 1 : 0
 
@@ -84,7 +83,6 @@ resource "exoscale_security_group_rule" "nodeport_tcp_services" {
   end_port          = 32767
 }
 
-# TODO Review why we need to allow access to node ports from the world
 resource "exoscale_security_group_rule" "nodeport_udp_services" {
   count = var.udp_node_ports_world_accessible ? 1 : 0
 

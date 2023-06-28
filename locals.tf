@@ -1,22 +1,19 @@
 locals {
   base_domain = coalesce(var.base_domain, format("%s.nip.io", replace(exoscale_nlb.this.ip_address, ".", "-")))
 
-  # This local needs to be the same as the key in the nodepools_defaults map.
-  # It is used then to pass the proper IDs of the router pool as module outputs.
   router_nodepool = "${var.cluster_name}-router"
 
   # A default nodepool is created to install Traefik, as recommended in the official documentation
   # https://community.exoscale.com/documentation/sks/loadbalancer-ingress/.
   nodepools_defaults = {
-    "${var.cluster_name}-router" = {
-      size            = var.router_nodepool.size
-      instance_type   = var.router_nodepool.instance_type
-      description     = "Router nodepool for ${var.cluster_name} used to avoid loopbacks."
-      instance_prefix = var.router_nodepool.instance_prefix
-      disk_size       = var.router_nodepool.disk_size
-
-      taints = var.router_nodepool.taints
-
+    "${local.router_nodepool}" = {
+      size                = var.router_nodepool.size
+      instance_type       = var.router_nodepool.instance_type
+      description         = "Router nodepool for ${var.cluster_name} used to avoid loopbacks."
+      instance_prefix     = var.router_nodepool.instance_prefix
+      disk_size           = var.router_nodepool.disk_size
+      labels              = var.router_nodepool.labels
+      taints              = var.router_nodepool.taints
       private_network_ids = var.router_nodepool.private_network_ids
     },
   }

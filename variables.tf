@@ -35,34 +35,38 @@ variable "nodepools" {
   description = <<-EOT
   Map containing the SKS node pools to create.
   
-  Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`. 
+  Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.
   The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
   EOT
-  type        = map(any) # TODO Add validation with the structure of the object instead of using a map of any although I do not see yet how this can work with the lookup function in the nodepool
-  default     = null
+  type = map(object({
+    size                = number
+    instance_type       = string
+    description         = optional(string)
+    instance_prefix     = optional(string, "pool")
+    disk_size           = optional(number, 50)
+    labels              = optional(map(string), {})
+    taints              = optional(map(string), {})
+    private_network_ids = optional(list(string), [])
+  }))
+  default = null
 }
 
 variable "router_nodepool" {
-  description = ""
+  description = "Configuration of the router nodepool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the nodepool when doing cluster upgrades.*"
   type = object({
-    size            = optional(number, 2)
-    instance_type   = optional(string, "standard.small")
-    instance_prefix = optional(string, null)
-    disk_size       = optional(number, null)
+    size            = number
+    instance_type   = string
+    instance_prefix = optional(string, "router")
+    disk_size       = optional(number, 20)
+    labels          = optional(map(string), {})
     taints = optional(map(string), {
       nodepool = "router:NoSchedule"
     })
-    private_network_ids = optional(list(string), null)
+    private_network_ids = optional(list(string), [])
   })
   default = {
-    size            = 2
-    instance_type   = "standard.small"
-    instance_prefix = null
-    disk_size       = null
-    taints = {
-      nodepool = "router:NoSchedule"
-    }
-    private_network_ids = null
+    size          = 2
+    instance_type = "standard.small"
   }
 }
 

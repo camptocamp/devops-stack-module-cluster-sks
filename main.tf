@@ -17,20 +17,20 @@ resource "exoscale_anti_affinity_group" "this" {
 resource "exoscale_sks_nodepool" "this" {
   for_each = local.nodepools
 
-  zone            = var.zone
-  cluster_id      = resource.exoscale_sks_cluster.this.id
-  name            = each.key
-  description     = lookup(each.value, "description", "")
-  instance_type   = each.value.instance_type
-  instance_prefix = lookup(each.value, "instance_prefix", "pool")
-  disk_size       = lookup(each.value, "disk_size", "50")
-  size            = each.value.size
-  labels          = lookup(each.value, "labels", {})
-  taints          = lookup(each.value, "taints", {})
-
+  zone                    = var.zone
+  cluster_id              = resource.exoscale_sks_cluster.this.id
   anti_affinity_group_ids = [resource.exoscale_anti_affinity_group.this[each.key].id]
-  security_group_ids      = [resource.exoscale_security_group.this.id]
-  private_network_ids     = lookup(each.value, "private_network_ids", [])
+
+  name                = each.key
+  size                = each.value.size
+  instance_type       = each.value.instance_type
+  description         = each.value.description
+  instance_prefix     = each.value.instance_prefix
+  disk_size           = each.value.disk_size
+  labels              = each.value.labels
+  taints              = each.value.taints
+  private_network_ids = each.value.private_network_ids
+  security_group_ids  = [resource.exoscale_security_group.this.id]
 }
 
 resource "exoscale_sks_kubeconfig" "this" {
