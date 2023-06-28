@@ -142,6 +142,40 @@ Type: `map(any)`
 
 Default: `null`
 
+==== [[input_router_nodepool]] <<input_router_nodepool,router_nodepool>>
+
+Description: n/a
+
+Type:
+[source,hcl]
+----
+object({
+    size            = optional(number, 2)
+    instance_type   = optional(string, "standard.small")
+    instance_prefix = optional(string, null)
+    disk_size       = optional(number, null)
+    taints = optional(map(string), {
+      nodepool = "router:NoSchedule"
+    })
+    private_network_ids = optional(list(string), null)
+  })
+----
+
+Default:
+[source,json]
+----
+{
+  "disk_size": null,
+  "instance_prefix": null,
+  "instance_type": "standard.small",
+  "private_network_ids": null,
+  "size": 2,
+  "taints": {
+    "nodepool": "router:NoSchedule"
+  }
+}
+----
+
 ==== [[input_tcp_node_ports_world_accessible]] <<input_tcp_node_ports_world_accessible,tcp_node_ports_world_accessible>>
 
 Description: Create a security group rule that allows world access to to NodePort TCP services. Recommended to leave open as per https://community.exoscale.com/documentation/sks/quick-start/#creating-a-cluster-from-the-cli[SKS documentation].
@@ -317,6 +351,42 @@ The other keys are optional: `description`, `instance_prefix`, `disk_size`, `lab
 
 |`map(any)`
 |`null`
+|no
+
+|[[input_router_nodepool]] <<input_router_nodepool,router_nodepool>>
+|n/a
+|
+
+[source]
+----
+object({
+    size            = optional(number, 2)
+    instance_type   = optional(string, "standard.small")
+    instance_prefix = optional(string, null)
+    disk_size       = optional(number, null)
+    taints = optional(map(string), {
+      nodepool = "router:NoSchedule"
+    })
+    private_network_ids = optional(list(string), null)
+  })
+----
+
+|
+
+[source]
+----
+{
+  "disk_size": null,
+  "instance_prefix": null,
+  "instance_type": "standard.small",
+  "private_network_ids": null,
+  "size": 2,
+  "taints": {
+    "nodepool": "router:NoSchedule"
+  }
+}
+----
+
 |no
 
 |[[input_tcp_node_ports_world_accessible]] <<input_tcp_node_ports_world_accessible,tcp_node_ports_world_accessible>>

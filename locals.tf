@@ -9,16 +9,15 @@ locals {
   # https://community.exoscale.com/documentation/sks/loadbalancer-ingress/.
   nodepools_defaults = {
     "${var.cluster_name}-router" = {
-      size            = 2
-      instance_type   = "standard.small"
+      size            = var.router_nodepool.size
+      instance_type   = var.router_nodepool.instance_type
       description     = "Router nodepool for ${var.cluster_name} used to avoid loopbacks."
-      instance_prefix = null
-      disk_size       = null
+      instance_prefix = var.router_nodepool.instance_prefix
+      disk_size       = var.router_nodepool.disk_size
 
-      taints = {
-        nodepool = "router:NoSchedule"
-      }
-      private_network_ids = null
+      taints = var.router_nodepool.taints
+
+      private_network_ids = var.router_nodepool.private_network_ids
     },
   }
 

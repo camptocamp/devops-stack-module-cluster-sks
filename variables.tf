@@ -42,6 +42,30 @@ variable "nodepools" {
   default     = null
 }
 
+variable "router_nodepool" {
+  description = ""
+  type = object({
+    size            = optional(number, 2)
+    instance_type   = optional(string, "standard.small")
+    instance_prefix = optional(string, null)
+    disk_size       = optional(number, null)
+    taints = optional(map(string), {
+      nodepool = "router:NoSchedule"
+    })
+    private_network_ids = optional(list(string), null)
+  })
+  default = {
+    size            = 2
+    instance_type   = "standard.small"
+    instance_prefix = null
+    disk_size       = null
+    taints = {
+      nodepool = "router:NoSchedule"
+    }
+    private_network_ids = null
+  }
+}
+
 variable "tcp_node_ports_world_accessible" {
   description = "Create a security group rule that allows world access to to NodePort TCP services. Recommended to leave open as per https://community.exoscale.com/documentation/sks/quick-start/#creating-a-cluster-from-the-cli[SKS documentation]."
   type        = bool
