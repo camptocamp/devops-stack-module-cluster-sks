@@ -1,5 +1,23 @@
 = devops-stack-module-cluster-sks
 
+== Upgrade stratergy
+
+=== Manual minor K8S upgrade
+
+IMPORTANT: Exoscale provider version must be >= v0.49.x since previous versions do not support cluster upgrade. 
+
+- Change the Kubernetes version deployed by your SKS module in Terraform and apply.
+
+- Scale up all your nodepools (router one inclued) through Terraform SKS module to twice their original size and apply. Wait for all nodes to be in ready state and check that their K8S version match the one you configured. Check in Longhorn UI that all the nodes are schedulable. You can also do a backup of all your volumes if needed through Longhorn UI to do not loss your applications data. 
+
+- Cordon all the old nodes and start draining them one by one using `kubectl drain --ignore-daemonsets --delete-emptydir-data --timeout=1m <node_id>`
+
+- When all the old nodes are drained and all pods are deployed to new nodes, do a `summon terraform refresh`. If you use a Keycloak module provisioned by Terraform with Keycloak provider you should have diffs on Keycloak's resources. Apply them.
+
+- Before deleting the old nodes, be sure to test and validate your cluster health! Once you're confident enough, you can retore original nodepool sizes in Terraform and apply.
+
+NOTE: Exoscale's nodepools will automatically choose cordoned nodes to delete in priority.
+
 // A https://devops-stack.io/[DevOps Stack] module to deploy a Kubernetes cluster on https://community.exoscale.com/documentation/sks/overview/[Exoscale SKS].
 
 // The module creates a Kubernetes cluster with the node pools passed as input. It also creates a Network Load Balancer (NLB), a security group and a DNS record to allow access to the cluster and the workloads deployed on it.
