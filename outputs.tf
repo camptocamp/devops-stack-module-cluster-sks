@@ -10,7 +10,7 @@ output "base_domain" {
 
 output "cluster_id" {
   description = "ID of the SKS cluster."
-  value = resource.exoscale_sks_cluster.this.id
+  value       = resource.exoscale_sks_cluster.this.id
 }
 
 output "nlb_ip_address" {
