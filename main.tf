@@ -42,12 +42,14 @@ resource "exoscale_sks_kubeconfig" "this" {
   groups = ["system:masters"]
 
   # Define a lifetime for the generated kubeconfig file
-  ttl_seconds           = 259200 # 72 hours
-  early_renewal_seconds = 86400  # 24 hours
+  ttl_seconds           = var.kubeconfig_ttl
+  early_renewal_seconds = var.kubeconfig_early_renewal
 }
 
 resource "local_sensitive_file" "sks_kubeconfig_file" {
-  filename        = "${var.cluster_name}-config"
+  count = var.create_kubeconfig_file ? 1 : 0
+
+  filename        = "${var.cluster_name}-config.yaml"
   content         = resource.exoscale_sks_kubeconfig.this.kubeconfig
   file_permission = "0600"
 }

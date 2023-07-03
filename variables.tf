@@ -52,7 +52,7 @@ variable "nodepools" {
 }
 
 variable "router_nodepool" {
-  description = "Configuration of the router nodepool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the nodepool when doing cluster upgrades.*"
+  description = "Configuration of the router node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*"
   type = object({
     size            = number
     instance_type   = string
@@ -83,7 +83,25 @@ variable "udp_node_ports_world_accessible" {
 }
 
 variable "cni" {
-  description = "Specify which CNI to use by default. Accepted values are `calico` or `cilium`."
+  description = "Specify which CNI to use by default. Accepted values are `calico` or `cilium`, but you cannot change this value after the first deployment. This module creates the required security group rules."
   type        = string
   default     = "cilium"
+}
+
+variable "kubeconfig_ttl" {
+  description = "Validity period of the kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information."
+  type        = number
+  default     = 2592000 # 30 days
+}
+
+variable "kubeconfig_early_renewal" {
+  description = "Renew the kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information."
+  type        = number
+  default     = 864000 # 10 days
+}
+
+variable "create_kubeconfig_file" {
+  description = "Create a Kubeconfig file in the directory where `terraform apply` is run. The file will be named `<cluster_name>-config.yaml`."
+  type        = bool
+  default     = false
 }
