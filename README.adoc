@@ -1,58 +1,139 @@
 = devops-stack-module-cluster-sks
 
-== Upgrade stratergy
+A https://devops-stack.io/[DevOps Stack] module to deploy a Kubernetes cluster on https://community.exoscale.com/documentation/sks/overview/[Exoscale SKS].
 
-=== Manual minor K8S upgrade
+The module creates a Kubernetes cluster with the node pools passed as input. It also creates anti-affinity group for each node pool, a Network Load Balancer (NLB), and a security group for the entire cluster. 
 
-IMPORTANT: Exoscale provider version must be >= v0.49.x since previous versions do not support cluster upgrade. 
+== Usage
 
-- Change the Kubernetes version deployed by your SKS module in Terraform and apply.
+This module can be used with the following declaration:
 
-- Scale up all your nodepools (router one inclued) through Terraform SKS module to twice their original size and apply. Wait for all nodes to be in ready state and check that their K8S version match the one you configured. Check in Longhorn UI that all the nodes are schedulable. You can also do a backup of all your volumes if needed through Longhorn UI to do not loss your applications data. 
+[source,terraform]
+----
+module "sks" {
+  source = "git::https://github.com/camptocamp/devops-stack-module-cluster-sks.git?ref=v1.0.0"
 
-- Cordon all the old nodes and start draining them one by one using `kubectl drain --ignore-daemonsets --delete-emptydir-data --timeout=1m <node_id>`
+  cluster_name       = local.cluster_name
+  kubernetes_version = local.kubernetes_version
+  zone               = local.zone
+  base_domain        = local.base_domain
 
-- When all the old nodes are drained and all pods are deployed to new nodes, do a `summon terraform refresh`. If you use a Keycloak module provisioned by Terraform with Keycloak provider you should have diffs on Keycloak's resources. Apply them.
+  nodepools = {
+    "${local.cluster_name}-default" = {
+      size            = 3
+      instance_type   = "standard.large"
+      description     = "Default node pool for ${local.cluster_name}."
+      instance_prefix = "default"
+    },
+  }
+}
+----
 
-- Before deleting the old nodes, be sure to test and validate your cluster health! Once you're confident enough, you can retore original nodepool sizes in Terraform and apply.
+IMPORTANT: A minimum of a single node pool with 3 nodes is required. See the <<_persistent_volumes,Persistent Volumes>> section for more information.
 
-NOTE: Exoscale's nodepools will automatically choose cordoned nodes to delete in priority.
+Multiple node pools and with more complex settings can be declared. The following example adds a node pool with a taint and label to be used exclusively for monitoring workloads:
 
-// A https://devops-stack.io/[DevOps Stack] module to deploy a Kubernetes cluster on https://community.exoscale.com/documentation/sks/overview/[Exoscale SKS].
+[source,terraform]
+----
+module "sks" {
+  source = "git::https://github.com/camptocamp/devops-stack-module-cluster-sks.git?ref=v1.0.0"
 
-// The module creates a Kubernetes cluster with the node pools passed as input. It also creates a Network Load Balancer (NLB), a security group and a DNS record to allow access to the cluster and the workloads deployed on it.
+  cluster_name       = local.cluster_name
+  kubernetes_version = local.kubernetes_version
+  zone               = local.zone
+  base_domain        = local.base_domain
+
+  nodepools = {
+    "${local.cluster_name}-default" = {
+      size            = 3
+      instance_type   = "standard.large"
+      description     = "Default node pool for ${local.cluster_name}."
+      instance_prefix = "default"
+    },
+    "${local.cluster_name}-monitoring" = {
+      size            = 2
+      instance_type   = "standard.large"
+      description     = "Monitoring node pool for ${local.cluster_name}."
+      instance_prefix = "monitoring"
+      disk_size       = 150
+      labels = {
+        role = "monitoring"
+      }
+      taints = {
+        nodepool = "monitoring:NoSchedule"
+      }
+    },
+  }
+}
+----
+
+TIP: You can consult the available instance types on the https://www.exoscale.com/pricing/#compute[Pricing page] of Exoscale. Note that not all instance types are available in all zones and take note of the https://community.exoscale.com/documentation/sks/overview/#limitations[these limitations of SKS].
+
+=== Kubeconfig
+
+The module uses the https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig[`exoscale_sks_kubeconfig` resource] to get a Kubeconfig with administrator privileges on the cluster. We use this configuration file to parse the credentials needed to set the providers on the caller module.
+
+TIP: If the variable `create_kubeconfig_file` is activated, a local file is created with the Kubeconfig content, which can be used to interact with the cluster. You can still get the Kubeconfig's important values from the outputs `kubernetes_*`.
+
+IMPORTANT: The validity of the client certificate is limited to 30 days by default and the earliest time for renewal is 10 days. This means that if no `terraform apply` is run between the 10th and 30th days after the last `terraform apply`, the Kubeconfig will be invalid and the next on will fail. There are variables available to customize these values to suit your needs.
+
+In the case that you have left your Kubeconfig pass the expiry time, you can still get a new one by running a targeted `terraform apply` on the module:
+
+[source,bash]
+----
+$ terraform apply -target module.sks.exoscale_sks_kubeconfig.this
+----
+
+=== DNS and the `base_domain` variable
+
+In production, this module requires a domain name to be passed in the `base_domain` variable. This module will take care to create a CNAME record that points to the NLB, using the cluster name as an hostname.
+
+The DNS zone should be created outside this module and it requires a DNS Subscription in the same Exoscale account. This can be added on the Exoscale portal, on the _DNS_ tab. The subscription needs to be manually activated on the web interface, but it is recommended that the DNS zone is created on your root Terraform module.
+
+TIP: Check the Terraform code of the xref:ROOT:ROOT:tutorials/deploy_eks.adoc[SKS example] to learn how to create the DNS zone.
+
+If no value is passed to the `base_domain` variable, the module will create a https://nip.io/[nip.io] domain prefixed with the IP of the NLB. You can check said domain in the `base_domain` output.
+
+=== Network Load Balancer and ingress traffic
+
+The NLB is created in this module without any service associated. The NLB services are created by the Exoscale Cloud Controller Manager (CCM), which is deployed by default on SKS clusters. The CCM takes into account annotations on the `LoadBalancer` services to create the corresponding services on the NLB. These annotations are added by the xref:traefik:ROOT:README.adoc[Traefik module] and for that reason you need to pass the outputs `nlb_id`, `router_nodepool_id` and `router_instance_pool_id` from this module to the Traefik module.
+
+TIP: Check the official documentation of the https://github.com/exoscale/exoscale-cloud-controller-manager/blob/master/docs/service-loadbalancer.md/[CCM] and this https://www.exoscale.com/syslog/exoscale-kubernetes-cloud-controller-manager-release/[blog post] to learn more. An example is also provided by Exoscale on the https://community.exoscale.com/documentation/sks/loadbalancer-ingress/[SKS documentation], which contains the required annotations as well as a few interesting comments.
+
+=== Persistent Volumes
+
+This module requires that you deploy xref:longhorn:ROOT:README.adoc[Longhorn] in order to have a way to provision persistent volumes for your workloads. We configured the Longhorn module to replicate the volumes at least 3 times throughout the available nodes. For that reason, you need to deploy at least a node pool with minimum 3 nodes.
+
+// TODO Finish this section
+// TODO Consider creating a proper nodepool for the Longhorn storage nodes
+// TODO If doing previous todo, consider changing the upgrade procedure below to talk about the Longhorn volumes
 
 
-// TODO Test the auto-upgrade feature
-// TODO Add documentation about that
-
-// TODO Add documentation about the importance of passing the cluster ID to the Thanos and Loki modules
-
-// This module needs a DNS Subscription in the same Exoscale account to create a wildcard CNAME record that points to the NLB. The DNS zone to be created must be passed in the `base_domain` variable. This record is used by other DevOps Stack modules as default URLs for their applications.
-
-
-// Require at least a 3 node main pool where to deploy longhorn replicas.
-
-// Add documentation about cilium as CNI
-
-
-// Note that security group is created here and we do not support an external security group yet. 
 
 
 
-// https://github.com/exoscale/terraform-provider-exoscale/tree/master/examples
+== Upgrading the cluster
 
-// https://github.com/exoscale/exoscale-cloud-controller-manager/blob/master/docs/service-loadbalancer.md
+TIP: The https://community.exoscale.com/documentation/sks/lifecycle-management/[official documentation] is a good starting point to understand the upgrade process of SKS clusters.
 
+=== Manual upgrade of a minor Kubernetes version
 
-// TODO Quote the following block from the official documentation
-// annotations:
-//   # Uncomment if you want to use an already existing Exoscale LoadBalancer
-//   #service.beta.kubernetes.io/exoscale-loadbalancer-id: "09191de9-513b-4270-a44c-5aad8354bb47"
-//   #service.beta.kubernetes.io/exoscale-loadbalancer-external: "true"
-//   # When having multiple Nodepools attached to your SKS Cluster,
-//   # you need to specify then the ID of the underlying Instance Pool the NLB should forward traffic to
-//   #service.beta.kubernetes.io/exoscale-loadbalancer-service-instancepool-id: "F0D7A23E-14B8-4A6E-A134-1BFD0DF9A068"
+1. On your root Terraform code change the Kubernetes version deployed by your SKS module and do a `terraform apply`. This will upgrade the version of the control plane of the SKS cluster.
+
+2. Scale up all your node pools (router one included) through the `size` parameter on the `nodepools` and `router_nodepool` variables to twice their original size and do a `terraform apply`.
+
+3. Wait for all new nodes to be in a ready state and check that their Kubernetes version match the one you configured. Check in Longhorn Dashboard that all the nodes are schedulable. You can also do a backup of all your volumes if needed through Longhorn Dashboard to avoid losing your applications persistent volumes. 
+// TODO Clarify this with HUGO
+
+4. Cordon all the old nodes and start draining them one by one using `kubectl drain --ignore-daemonsets --delete-emptydir-data --timeout=1m <node_id>`. This will move all the pods to the new nodes.
+
+5. When all the old nodes are drained and all pods are deployed to new nodes, do a `terraform refresh`. If you use a Keycloak module provisioned by Terraform with Keycloak provider you should have diffs on Keycloak's resources. Apply them.
+
+6. Before deleting the old nodes, be sure to test and validate your cluster health! Once you're confident enough, you can restore original node pool sizes in Terraform and apply. This will delete the old nodes.
+
+NOTE: SKS instance pools will automatically choose cordoned nodes to delete in priority.
+
+== Technical Reference
 
 // BEGIN_TF_DOCS
 === Requirements
@@ -274,6 +355,12 @@ Description: Certificate Client Certificate required to communicate with the clu
 
 Description: Raw `.kube/config` file for `kubectl` access.
 // END_TF_DOCS
+
+=== Reference in table format 
+
+.Show tables
+[%collapsible]
+====
 // BEGIN_TF_TABLES
 = Requirements
 
@@ -447,3 +534,4 @@ object({
 |[[output_raw_kubeconfig]] <<output_raw_kubeconfig,raw_kubeconfig>> |Raw `.kube/config` file for `kubectl` access.
 |===
 // END_TF_TABLES
+====
