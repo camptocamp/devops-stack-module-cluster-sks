@@ -142,7 +142,7 @@ The following requirements are needed by this module:
 
 - [[requirement_terraform]] <<requirement_terraform,terraform>> (>= 1.0)
 
-- [[requirement_exoscale]] <<requirement_exoscale,exoscale>> (>= 0.47)
+- [[requirement_exoscale]] <<requirement_exoscale,exoscale>> (>= 0.49)
 
 - [[requirement_external]] <<requirement_external,external>> (>= 2.1)
 
@@ -152,7 +152,7 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- [[provider_exoscale]] <<provider_exoscale,exoscale>> (>= 0.47)
+- [[provider_exoscale]] <<provider_exoscale,exoscale>> (>= 0.49)
 
 - [[provider_local]] <<provider_local,local>>
 
@@ -234,29 +234,43 @@ Default: `"pro"`
 
 Description: Map containing the SKS node pools to create.  
 
-Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.   
+Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.  
 The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
 
-Type: `map(any)`
+Type:
+[source,hcl]
+----
+map(object({
+    size                = number
+    instance_type       = string
+    description         = optional(string)
+    instance_prefix     = optional(string, "pool")
+    disk_size           = optional(number, 50)
+    labels              = optional(map(string), {})
+    taints              = optional(map(string), {})
+    private_network_ids = optional(list(string), [])
+  }))
+----
 
 Default: `null`
 
 ==== [[input_router_nodepool]] <<input_router_nodepool,router_nodepool>>
 
-Description: n/a
+Description: Configuration of the router node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*
 
 Type:
 [source,hcl]
 ----
 object({
-    size            = optional(number, 2)
-    instance_type   = optional(string, "standard.small")
-    instance_prefix = optional(string, null)
-    disk_size       = optional(number, null)
+    size            = number
+    instance_type   = string
+    instance_prefix = optional(string, "router")
+    disk_size       = optional(number, 20)
+    labels          = optional(map(string), {})
     taints = optional(map(string), {
       nodepool = "router:NoSchedule"
     })
-    private_network_ids = optional(list(string), null)
+    private_network_ids = optional(list(string), [])
   })
 ----
 
@@ -264,14 +278,8 @@ Default:
 [source,json]
 ----
 {
-  "disk_size": null,
-  "instance_prefix": null,
   "instance_type": "standard.small",
-  "private_network_ids": null,
-  "size": 2,
-  "taints": {
-    "nodepool": "router:NoSchedule"
-  }
+  "size": 2
 }
 ----
 
@@ -293,11 +301,35 @@ Default: `false`
 
 ==== [[input_cni]] <<input_cni,cni>>
 
-Description: Specify which CNI to use by default. Accepted values are `calico` or `cilium`.
+Description: Specify which CNI to use by default. Accepted values are `calico` or `cilium`, but you cannot change this value after the first deployment. This module creates the required security group rules.
 
 Type: `string`
 
 Default: `"cilium"`
+
+==== [[input_kubeconfig_ttl]] <<input_kubeconfig_ttl,kubeconfig_ttl>>
+
+Description: Validity period of the kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information.
+
+Type: `number`
+
+Default: `2592000`
+
+==== [[input_kubeconfig_early_renewal]] <<input_kubeconfig_early_renewal,kubeconfig_early_renewal>>
+
+Description: Renew the kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information.
+
+Type: `number`
+
+Default: `864000`
+
+==== [[input_create_kubeconfig_file]] <<input_create_kubeconfig_file,create_kubeconfig_file>>
+
+Description: Create a Kubeconfig file in the directory where `terraform apply` is run. The file will be named `<cluster_name>-config.yaml`.
+
+Type: `bool`
+
+Default: `false`
 
 === Outputs
 
@@ -368,7 +400,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |===
 |Name |Version
 |[[requirement_terraform]] <<requirement_terraform,terraform>> |>= 1.0
-|[[requirement_exoscale]] <<requirement_exoscale,exoscale>> |>= 0.47
+|[[requirement_exoscale]] <<requirement_exoscale,exoscale>> |>= 0.49
 |[[requirement_external]] <<requirement_external,external>> |>= 2.1
 |[[requirement_kubernetes]] <<requirement_kubernetes,kubernetes>> |>= 2.21
 |===
@@ -378,7 +410,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 [cols="a,a",options="header,autowidth"]
 |===
 |Name |Version
-|[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.47
+|[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.49
 |[[provider_local]] <<provider_local,local>> |n/a
 |===
 
@@ -454,25 +486,41 @@ Description: Raw `.kube/config` file for `kubectl` access.
 Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.
 The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
 
-|`map(any)`
+|
+
+[source]
+----
+map(object({
+    size                = number
+    instance_type       = string
+    description         = optional(string)
+    instance_prefix     = optional(string, "pool")
+    disk_size           = optional(number, 50)
+    labels              = optional(map(string), {})
+    taints              = optional(map(string), {})
+    private_network_ids = optional(list(string), [])
+  }))
+----
+
 |`null`
 |no
 
 |[[input_router_nodepool]] <<input_router_nodepool,router_nodepool>>
-|n/a
+|Configuration of the router node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*
 |
 
 [source]
 ----
 object({
-    size            = optional(number, 2)
-    instance_type   = optional(string, "standard.small")
-    instance_prefix = optional(string, null)
-    disk_size       = optional(number, null)
+    size            = number
+    instance_type   = string
+    instance_prefix = optional(string, "router")
+    disk_size       = optional(number, 20)
+    labels          = optional(map(string), {})
     taints = optional(map(string), {
       nodepool = "router:NoSchedule"
     })
-    private_network_ids = optional(list(string), null)
+    private_network_ids = optional(list(string), [])
   })
 ----
 
@@ -481,14 +529,8 @@ object({
 [source]
 ----
 {
-  "disk_size": null,
-  "instance_prefix": null,
   "instance_type": "standard.small",
-  "private_network_ids": null,
-  "size": 2,
-  "taints": {
-    "nodepool": "router:NoSchedule"
-  }
+  "size": 2
 }
 ----
 
@@ -507,9 +549,27 @@ object({
 |no
 
 |[[input_cni]] <<input_cni,cni>>
-|Specify which CNI to use by default. Accepted values are `calico` or `cilium`.
+|Specify which CNI to use by default. Accepted values are `calico` or `cilium`, but you cannot change this value after the first deployment. This module creates the required security group rules.
 |`string`
 |`"cilium"`
+|no
+
+|[[input_kubeconfig_ttl]] <<input_kubeconfig_ttl,kubeconfig_ttl>>
+|Validity period of the kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information.
+|`number`
+|`2592000`
+|no
+
+|[[input_kubeconfig_early_renewal]] <<input_kubeconfig_early_renewal,kubeconfig_early_renewal>>
+|Renew the kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information.
+|`number`
+|`864000`
+|no
+
+|[[input_create_kubeconfig_file]] <<input_create_kubeconfig_file,create_kubeconfig_file>>
+|Create a Kubeconfig file in the directory where `terraform apply` is run. The file will be named `<cluster_name>-config.yaml`.
+|`bool`
+|`false`
 |no
 
 |===
