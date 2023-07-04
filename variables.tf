@@ -89,15 +89,15 @@ variable "cni" {
 }
 
 variable "kubeconfig_ttl" {
-  description = "Validity period of the kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information."
+  description = "Validity period of the Kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information."
   type        = number
-  default     = 2592000 # 30 days
+  default     = 0 # Unlimited lifetime
 }
 
 variable "kubeconfig_early_renewal" {
-  description = "Renew the kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information."
+  description = "Renew the Kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information."
   type        = number
-  default     = 864000 # 10 days
+  default     = 0
 }
 
 variable "create_kubeconfig_file" {
