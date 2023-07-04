@@ -98,19 +98,11 @@ If no value is passed to the `base_domain` variable, the module will create a ht
 
 The NLB is created in this module without any service associated. The NLB services are created by the Exoscale Cloud Controller Manager (CCM), which is deployed by default on SKS clusters. The CCM takes into account annotations on the `LoadBalancer` services to create the corresponding services on the NLB. These annotations are added by the xref:traefik:ROOT:README.adoc[Traefik module] and for that reason you need to pass the outputs `nlb_id`, `router_nodepool_id` and `router_instance_pool_id` from this module to the Traefik module.
 
-TIP: Check the official documentation of the https://github.com/exoscale/exoscale-cloud-controller-manager/blob/master/docs/service-loadbalancer.md/[CCM] and this https://www.exoscale.com/syslog/exoscale-kubernetes-cloud-controller-manager-release/[blog post] to learn more. An example is also provided by Exoscale on the https://community.exoscale.com/documentation/sks/loadbalancer-ingress/[SKS documentation], which contains the required annotations as well as a few interesting comments.
+TIP: Check the official documentation of the https://github.com/exoscale/exoscale-cloud-controller-manager/blob/master/docs/service-loadbalancer.md/[CCM] and this https://www.exoscale.com/syslog/exoscale-kubernetes-cloud-controller-manager-release/[blog post] to learn more. An example is also provided by Exoscale on the https://community.exoscale.com/documentation/sks/loadbalancer-ingress/[SKS documentation], which contains the required annotations as well was a few interesting comments.
 
 === Persistent Volumes
 
 This module requires that you deploy xref:longhorn:ROOT:README.adoc[Longhorn] in order to have a way to provision persistent volumes for your workloads. We configured the Longhorn module to replicate the volumes at least 3 times throughout the available nodes. For that reason, you need to deploy at least a node pool with minimum 3 nodes.
-
-// TODO Finish this section
-// TODO Consider creating a proper nodepool for the Longhorn storage nodes
-// TODO If doing previous todo, consider changing the upgrade procedure below to talk about the Longhorn volumes
-
-
-
-
 
 == Upgrading the cluster
 
@@ -122,10 +114,9 @@ TIP: The https://community.exoscale.com/documentation/sks/lifecycle-management/[
 
 2. Scale up all your node pools (router one included) through the `size` parameter on the `nodepools` and `router_nodepool` variables to twice their original size and do a `terraform apply`.
 
-3. Wait for all new nodes to be in a ready state and check that their Kubernetes version match the one you configured. Check in Longhorn Dashboard that all the nodes are schedulable. 
-I advice you to do a backup of all your volumes in case of troubles during the upgrade to avoid losing your applications persistent volumes. 
+3. Wait for all new nodes to be in a ready state and check that their Kubernetes version match the one you configured. Check in Longhorn Dashboard that all the nodes are schedulable. It is advised you to do a backup of all your volumes in case of troubles during the upgrade to avoid losing your applications persistent volumes.
 
-4. In the Longhorn dashboard, go to the "volume" tab, select all your volumes and select "Update Replicas Count" action. In the dialog box, replace the actual replicas count of these volumes by twice your old schedulable node count (by default it's 3) in order to replicate your volumes on new nodes.
+4. In the Longhorn dashboard, go to the _Volume_ tab, select all your volumes and select _Update Replicas Count_ action. In the dialog box, replace the actual replicas count of these volumes by twice your old schedulable node count (by default it's 3) in order to replicate your volumes on the new nodes.
 
 5. Cordon all the old nodes and start draining them one by one using `kubectl drain --ignore-daemonsets --delete-emptydir-data --timeout=1m <node_id>`. This will move all the pods to the new nodes.
 
