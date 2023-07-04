@@ -304,19 +304,19 @@ Default: `"cilium"`
 
 ==== [[input_kubeconfig_ttl]] <<input_kubeconfig_ttl,kubeconfig_ttl>>
 
-Description: Validity period of the kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information.
+Description: Validity period of the Kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information.
 
 Type: `number`
 
-Default: `2592000`
+Default: `0`
 
 ==== [[input_kubeconfig_early_renewal]] <<input_kubeconfig_early_renewal,kubeconfig_early_renewal>>
 
-Description: Renew the kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information.
+Description: Renew the Kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information.
 
 Type: `number`
 
-Default: `864000`
+Default: `0`
 
 ==== [[input_create_kubeconfig_file]] <<input_create_kubeconfig_file,create_kubeconfig_file>>
 
@@ -550,15 +550,15 @@ object({
 |no
 
 |[[input_kubeconfig_ttl]] <<input_kubeconfig_ttl,kubeconfig_ttl>>
-|Validity period of the kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information.
+|Validity period of the Kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information.
 |`number`
-|`2592000`
+|`0`
 |no
 
 |[[input_kubeconfig_early_renewal]] <<input_kubeconfig_early_renewal,kubeconfig_early_renewal>>
-|Renew the kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information.
+|Renew the Kubeconfig file if its age is older than this value in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#early_renewal_seconds[official documentation] for more information.
 |`number`
-|`864000`
+|`0`
 |no
 
 |[[input_create_kubeconfig_file]] <<input_create_kubeconfig_file,create_kubeconfig_file>>
