@@ -122,14 +122,18 @@ TIP: The https://community.exoscale.com/documentation/sks/lifecycle-management/[
 
 2. Scale up all your node pools (router one included) through the `size` parameter on the `nodepools` and `router_nodepool` variables to twice their original size and do a `terraform apply`.
 
-3. Wait for all new nodes to be in a ready state and check that their Kubernetes version match the one you configured. Check in Longhorn Dashboard that all the nodes are schedulable. You can also do a backup of all your volumes if needed through Longhorn Dashboard to avoid losing your applications persistent volumes. 
-// TODO Clarify this with HUGO
+3. Wait for all new nodes to be in a ready state and check that their Kubernetes version match the one you configured. Check in Longhorn Dashboard that all the nodes are schedulable. 
+I advice you to do a backup of all your volumes in case of troubles during the upgrade to avoid losing your applications persistent volumes. 
 
-4. Cordon all the old nodes and start draining them one by one using `kubectl drain --ignore-daemonsets --delete-emptydir-data --timeout=1m <node_id>`. This will move all the pods to the new nodes.
+4. In the Longhorn dashboard, go to the "volume" tab, select all your volumes and select "Update Replicas Count" action. In the dialog box, replace the actual replicas count of these volumes by twice your old schedulable node count (by default it's 3) in order to replicate your volumes on new nodes.
 
-5. When all the old nodes are drained and all pods are deployed to new nodes, do a `terraform refresh`. If you use a Keycloak module provisioned by Terraform with Keycloak provider you should have diffs on Keycloak's resources. Apply them.
+5. Cordon all the old nodes and start draining them one by one using `kubectl drain --ignore-daemonsets --delete-emptydir-data --timeout=1m <node_id>`. This will move all the pods to the new nodes.
 
-6. Before deleting the old nodes, be sure to test and validate your cluster health! Once you're confident enough, you can restore original node pool sizes in Terraform and apply. This will delete the old nodes.
+6. When all the old nodes are drained and all pods are deployed to new nodes, do a `terraform refresh`. If you use a Keycloak module provisioned by Terraform with Keycloak provider you should have diffs on Keycloak's resources. Apply them.
+
+7. Before deleting the old nodes, be sure to test and validate your cluster health! Once you're confident enough, you can restore original node pool sizes in Terraform and apply. This will delete the old nodes.
+
+8. Finally, go to the Longhorn dashboard, restore the original replicas count for every volumes and check that every volumes are in healthy state.
 
 NOTE: SKS instance pools will automatically choose cordoned nodes to delete in priority.
 
