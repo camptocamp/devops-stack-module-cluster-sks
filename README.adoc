@@ -211,7 +211,7 @@ Default: `null`
 
 ==== [[input_auto_upgrade]] <<input_auto_upgrade,auto_upgrade>>
 
-Description: Enable automatic upgrade of the SKS cluster.
+Description: Enable automatic upgrade of the SKS cluster control plane.
 
 Type: `bool`
 
@@ -296,7 +296,7 @@ Default: `false`
 
 ==== [[input_cni]] <<input_cni,cni>>
 
-Description: Specify which CNI to use by default. Accepted values are `calico` or `cilium`, but you cannot change this value after the first deployment. This module creates the required security group rules.
+Description: Specify which CNI plugin to use (cannot be changed after the first deployment). Accepted values are `calico` or `cilium`. This module creates the required security group rules.
 
 Type: `string`
 
@@ -465,7 +465,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |yes
 
 |[[input_auto_upgrade]] <<input_auto_upgrade,auto_upgrade>>
-|Enable automatic upgrade of the SKS cluster.
+|Enable automatic upgrade of the SKS cluster control plane.
 |`bool`
 |`false`
 |no
@@ -544,7 +544,7 @@ object({
 |no
 
 |[[input_cni]] <<input_cni,cni>>
-|Specify which CNI to use by default. Accepted values are `calico` or `cilium`, but you cannot change this value after the first deployment. This module creates the required security group rules.
+|Specify which CNI plugin to use (cannot be changed after the first deployment). Accepted values are `calico` or `cilium`. This module creates the required security group rules.
 |`string`
 |`"cilium"`
 |no
