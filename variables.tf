@@ -20,7 +20,7 @@ variable "kubernetes_version" {
 }
 
 variable "auto_upgrade" {
-  description = "Enable automatic upgrade of the SKS cluster."
+  description = "Enable automatic upgrade of the SKS cluster control plane."
   type        = bool
   default     = false
 }
@@ -83,7 +83,7 @@ variable "udp_node_ports_world_accessible" {
 }
 
 variable "cni" {
-  description = "Specify which CNI to use by default. Accepted values are `calico` or `cilium`, but you cannot change this value after the first deployment. This module creates the required security group rules."
+  description = "Specify which CNI plugin to use (cannot be changed after the first deployment). Accepted values are `calico` or `cilium`. This module creates the required security group rules."
   type        = string
   default     = "cilium"
 }
