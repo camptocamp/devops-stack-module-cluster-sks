@@ -9,6 +9,12 @@ variable "base_domain" {
   default     = null
 }
 
+variable "description" {
+  description = "A free-form string description to apply to the SKS cluster."
+  type        = string
+  default     = null
+}
+
 variable "zone" {
   description = "The name of the zone where to deploy the SKS cluster. Available zones can be consulted https://community.exoscale.com/documentation/sks/overview/#availability[here]."
   type        = string
