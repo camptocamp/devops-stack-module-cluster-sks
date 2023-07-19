@@ -1,6 +1,7 @@
 resource "exoscale_sks_cluster" "this" {
   zone          = var.zone
   name          = var.cluster_name
+  description   = var.description
   version       = var.kubernetes_version
   auto_upgrade  = var.auto_upgrade
   service_level = var.service_level

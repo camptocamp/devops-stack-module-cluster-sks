@@ -209,6 +209,14 @@ Type: `string`
 
 Default: `null`
 
+==== [[input_description]] <<input_description,description>>
+
+Description: A free-form string description to apply to the SKS cluster.
+
+Type: `string`
+
+Default: `null`
+
 ==== [[input_auto_upgrade]] <<input_auto_upgrade,auto_upgrade>>
 
 Description: Enable automatic upgrade of the SKS cluster control plane.
@@ -448,6 +456,12 @@ Description: Raw `.kube/config` file for `kubectl` access.
 
 |[[input_base_domain]] <<input_base_domain,base_domain>>
 |The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
+|`string`
+|`null`
+|no
+
+|[[input_description]] <<input_description,description>>
+|A free-form string description to apply to the SKS cluster.
 |`string`
 |`null`
 |no
