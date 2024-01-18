@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.1.0...v1.1.1) (2024-01-18)
+
+
+### Documentation
+
+* remove hardcoded version from examples ([#9](https://github.com/camptocamp/devops-stack-module-cluster-sks/issues/9)) ([ca7ed2f](https://github.com/camptocamp/devops-stack-module-cluster-sks/commit/ca7ed2f172398409a9352ab91b8ae536683a7738))
+
 ## [1.1.0](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.0.0...v1.1.0) (2023-07-19)
 
 
