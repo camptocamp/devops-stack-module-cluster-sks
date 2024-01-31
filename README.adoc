@@ -209,6 +209,14 @@ Type: `string`
 
 Default: `null`
 
+==== [[input_subdomain]] <<input_subdomain,subdomain>>
+
+Description: Sub domain of the cluster. Value used for the ingress' URL of the application.
+
+Type: `string`
+
+Default: `"apps"`
+
 ==== [[input_description]] <<input_description,description>>
 
 Description: A free-form string description to apply to the SKS cluster.
@@ -235,7 +243,7 @@ Default: `"pro"`
 
 ==== [[input_nodepools]] <<input_nodepools,nodepools>>
 
-Description: Map containing the SKS node pools to create.  
+Description: Map containing the SKS node pools to create.
 
 Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.  
 The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
@@ -460,6 +468,12 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |`null`
 |no
 
+|[[input_subdomain]] <<input_subdomain,subdomain>>
+|Sub domain of the cluster. Value used for the ingress' URL of the application.
+|`string`
+|`"apps"`
+|no
+
 |[[input_description]] <<input_description,description>>
 |A free-form string description to apply to the SKS cluster.
 |`string`
@@ -492,6 +506,7 @@ Description: Raw `.kube/config` file for `kubectl` access.
 
 |[[input_nodepools]] <<input_nodepools,nodepools>>
 |Map containing the SKS node pools to create.
+
 Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.
 The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
 
