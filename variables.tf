@@ -9,6 +9,12 @@ variable "base_domain" {
   default     = null
 }
 
+variable "subdomain" {
+  description = "Sub domain of the cluster. Value used for the ingress' URL of the application."
+  type        = string
+  default     = "apps"
+}
+
 variable "description" {
   description = "A free-form string description to apply to the SKS cluster."
   type        = string
@@ -40,7 +46,7 @@ variable "service_level" {
 variable "nodepools" {
   description = <<-EOT
   Map containing the SKS node pools to create.
-  
+
   Needs to be a map of maps, where the key is the name of the node pool and the value is a map containing at least the keys `instance_type` and `size`.
   The other keys are optional: `description`, `instance_prefix`, `disk_size`, `labels`, `taints` and `private_network_ids`. Check the official documentation https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_nodepool[here] for more information.
   EOT
