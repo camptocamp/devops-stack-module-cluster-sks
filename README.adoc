@@ -203,7 +203,7 @@ The following input variables are optional (have default values):
 
 ==== [[input_base_domain]] <<input_base_domain,base_domain>>
 
-Description: The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
+Description: The base domain used for ingresses. If not provided, nip.io will be used taking the NLB IP address.
 
 Type: `string`
 
@@ -211,7 +211,7 @@ Default: `null`
 
 ==== [[input_subdomain]] <<input_subdomain,subdomain>>
 
-Description: Sub domain of the cluster. Value used for the ingress' URL of the application.
+Description: The subdomain used for ingresses.
 
 Type: `string`
 
@@ -463,13 +463,13 @@ Description: Raw `.kube/config` file for `kubectl` access.
 |yes
 
 |[[input_base_domain]] <<input_base_domain,base_domain>>
-|The base domain used for Ingresses. If not provided, nip.io will be used taking the NLB IP address.
+|The base domain used for ingresses. If not provided, nip.io will be used taking the NLB IP address.
 |`string`
 |`null`
 |no
 
 |[[input_subdomain]] <<input_subdomain,subdomain>>
-|Sub domain of the cluster. Value used for the ingress' URL of the application.
+|The subdomain used for ingresses.
 |`string`
 |`"apps"`
 |no
