@@ -13,7 +13,7 @@ resource "exoscale_domain_record" "wildcard_with_cluster_name" {
   count = var.base_domain == null ? 0 : 1
 
   domain      = data.exoscale_domain.this[count.index].id
-  name        = format("*.apps.%s", var.cluster_name)
+  name        = format("*.%s", trimprefix("${var.subdomain}.${var.cluster_name}", "."))
   record_type = "A"
   ttl         = "300"
   content     = resource.exoscale_nlb.this.ip_address
