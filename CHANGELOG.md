@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.1.1...v1.2.0) (2024-02-23)
+
+
+### Features
+
+* add a subdomain variable ([#11](https://github.com/camptocamp/devops-stack-module-cluster-sks/issues/11)) ([1f77d08](https://github.com/camptocamp/devops-stack-module-cluster-sks/commit/1f77d08e877f64985bb37db8caa0410f740d82cf))
+
 ## [1.1.1](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.1.0...v1.1.1) (2024-01-18)
 
 
