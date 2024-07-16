@@ -104,6 +104,8 @@ TIP: Check the official documentation of the https://github.com/exoscale/exoscal
 
 This module requires that you deploy xref:longhorn:ROOT:README.adoc[Longhorn] in order to have a way to provision persistent volumes for your workloads. We configured the Longhorn module to replicate the volumes at least 3 times throughout the available nodes. For that reason, you need to deploy at least a node pool with minimum 3 nodes.
 
+As an alternative, you can also use the CSI driver provided by Exoscale, although it is only available in limited regions, namely, `ch-gva-2` and `at-vie-1`. To do so, you simply need to set `exoscale_csi` driver to `true` and remove the Longhorn module from your root Terraform code. *Note that this requires a new deployment altogether.*
+
 == Upgrading the cluster
 
 TIP: The https://community.exoscale.com/documentation/sks/lifecycle-management/[official documentation] is a good starting point to understand the upgrade process of SKS clusters.

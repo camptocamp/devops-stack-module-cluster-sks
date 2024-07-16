@@ -111,6 +111,12 @@ variable "cni" {
   }
 }
 
+variable "exoscale_csi" {
+  description = "Enable the Exoscale Container Storage Interface on worker nodes. May only be set at creation time. If this is enabled, there is no need to use the module https://github.com/camptocamp/devops-stack-module-longhorn[Longhorn] to provision your Persistent Volumes."
+  type        = bool
+  default     = false
+}
+
 variable "kubeconfig_ttl" {
   description = "Validity period of the Kubeconfig file in seconds. See https://registry.terraform.io/providers/exoscale/exoscale/latest/docs/resources/sks_kubeconfig#ttl_seconds[official documentation] for more information."
   type        = number
