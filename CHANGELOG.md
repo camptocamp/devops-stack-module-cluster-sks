@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.2.0...v1.2.1) (2024-08-14)
+
+
+### Bug Fixes
+
+* add validation to string variables that have specific values  ([#13](https://github.com/camptocamp/devops-stack-module-cluster-sks/issues/13)) ([1108b98](https://github.com/camptocamp/devops-stack-module-cluster-sks/commit/1108b9829a92b1284e59c373602f7d5977ecfada))
+
 ## [1.2.0](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.1.1...v1.2.0) (2024-02-23)
 
 
