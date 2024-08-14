@@ -28,7 +28,7 @@ variable "zone" {
 }
 
 variable "kubernetes_version" {
-  description = "Kubernetes version to use for the SKS cluster. See `exo compute sks versions` for reference. May only be set at creation time."
+  description = "Kubernetes version to use for the SKS cluster. Run `exo compute sks versions` for reference. May only be set at creation time."
   type        = string
 }
 
@@ -42,6 +42,11 @@ variable "service_level" {
   description = "Choose the service level for the SKS cluster. _Starter_ can be used for test and development purposes, _Pro_ is recommended for production workloads. The official documentation is available https://community.exoscale.com/documentation/sks/overview/#pricing-tiers[here]."
   type        = string
   default     = "pro"
+
+  validation {
+    condition     = contains(["starter", "pro"], var.service_level)
+    error_message = "The service level must be either `starter` or `pro`."
+  }
 }
 
 variable "nodepools" {
@@ -99,6 +104,11 @@ variable "cni" {
   description = "Specify which CNI plugin to use (cannot be changed after the first deployment). Accepted values are `calico` or `cilium`. This module creates the required security group rules."
   type        = string
   default     = "cilium"
+
+  validation {
+    condition     = contains(["calico", "cilium"], var.cni)
+    error_message = "The CNI plugin must be either `calico` or `cilium`."
+  }
 }
 
 variable "kubeconfig_ttl" {
