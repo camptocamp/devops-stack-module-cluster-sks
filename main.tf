@@ -6,6 +6,7 @@ resource "exoscale_sks_cluster" "this" {
   auto_upgrade  = var.auto_upgrade
   service_level = var.service_level
   cni           = var.cni
+  exoscale_csi  = var.enable_csi_driver
 }
 
 resource "exoscale_anti_affinity_group" "this" {

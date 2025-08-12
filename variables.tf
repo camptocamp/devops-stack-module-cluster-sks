@@ -69,18 +69,16 @@ variable "nodepools" {
   default = null
 }
 
-variable "router_nodepool" {
-  description = "Configuration of the router node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*"
+variable "default_nodepool" {
+  description = "Configuration of the default node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*"
   type = object({
-    size            = number
-    instance_type   = string
-    instance_prefix = optional(string, "router")
-    disk_size       = optional(number, 20)
-    labels          = optional(map(string), {})
-    taints = optional(map(string), {
-      nodepool = "router:NoSchedule"
-    })
-    private_network_ids = optional(list(string), [])
+    size                = number
+    instance_type       = string
+    instance_prefix     = optional(string, "default")
+    disk_size           = optional(number, 20)
+    labels              = optional(map(string), {})
+    taints              = optional(map(string), {})
+    private_network_ids = optional(list(string), null)
   })
   default = {
     size          = 2
@@ -125,6 +123,12 @@ variable "kubeconfig_early_renewal" {
 
 variable "create_kubeconfig_file" {
   description = "Create a Kubeconfig file in the directory where `terraform apply` is run. The file will be named `<cluster_name>-config.yaml`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_csi_driver" {
+  description = "Enable the creation of the Exoscale CSI driver."
   type        = bool
   default     = false
 }
