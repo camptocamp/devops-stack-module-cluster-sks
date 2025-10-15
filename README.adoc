@@ -147,9 +147,9 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- [[provider_local]] <<provider_local,local>>
-
 - [[provider_exoscale]] <<provider_exoscale,exoscale>> (>= 0.49)
+
+- [[provider_local]] <<provider_local,local>>
 
 === Resources
 
