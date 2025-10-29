@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.2.1...v2.0.0) (2025-10-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* add csi support and replace router_nodepool by default_nodepool ([#15](https://github.com/camptocamp/devops-stack-module-cluster-sks/issues/15))
+
+### Features
+
+* add csi support and replace router_nodepool by default_nodepool ([#15](https://github.com/camptocamp/devops-stack-module-cluster-sks/issues/15)) ([4c1a703](https://github.com/camptocamp/devops-stack-module-cluster-sks/commit/4c1a7034cc5e190e1b6feef6d0b75cf22da60439))
+
 ## [1.2.1](https://github.com/camptocamp/devops-stack-module-cluster-sks/compare/v1.2.0...v1.2.1) (2024-08-14)
 
 
