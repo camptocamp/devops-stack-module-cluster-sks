@@ -147,9 +147,9 @@ The following requirements are needed by this module:
 
 The following providers are used by this module:
 
-- [[provider_local]] <<provider_local,local>>
-
 - [[provider_exoscale]] <<provider_exoscale,exoscale>> (>= 0.49)
+
+- [[provider_local]] <<provider_local,local>>
 
 === Resources
 
@@ -265,23 +265,21 @@ map(object({
 
 Default: `null`
 
-==== [[input_router_nodepool]] <<input_router_nodepool,router_nodepool>>
+==== [[input_default_nodepool]] <<input_default_nodepool,default_nodepool>>
 
-Description: Configuration of the router node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*
+Description: Configuration of the default node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*
 
 Type:
 [source,hcl]
 ----
 object({
-    size            = number
-    instance_type   = string
-    instance_prefix = optional(string, "router")
-    disk_size       = optional(number, 20)
-    labels          = optional(map(string), {})
-    taints = optional(map(string), {
-      nodepool = "router:NoSchedule"
-    })
-    private_network_ids = optional(list(string), [])
+    size                = number
+    instance_type       = string
+    instance_prefix     = optional(string, "default")
+    disk_size           = optional(number, 20)
+    labels              = optional(map(string), {})
+    taints              = optional(map(string), {})
+    private_network_ids = optional(list(string), null)
   })
 ----
 
@@ -342,6 +340,14 @@ Type: `bool`
 
 Default: `false`
 
+==== [[input_enable_csi_driver]] <<input_enable_csi_driver,enable_csi_driver>>
+
+Description: Enable the creation of the Exoscale CSI driver.
+
+Type: `bool`
+
+Default: `false`
+
 === Outputs
 
 The following outputs are exported:
@@ -366,13 +372,13 @@ Description: IP address of the Network Load Balancer.
 
 Description: ID of the Network Load Balancer.
 
-==== [[output_router_nodepool_id]] <<output_router_nodepool_id,router_nodepool_id>>
+==== [[output_default_nodepool_id]] <<output_default_nodepool_id,default_nodepool_id>>
 
-Description: ID of the node pool specifically created for Traefik.
+Description: ID of the default node pool.
 
-==== [[output_router_instance_pool_id]] <<output_router_instance_pool_id,router_instance_pool_id>>
+==== [[output_default_instance_pool_id]] <<output_default_instance_pool_id,default_instance_pool_id>>
 
-Description: Instance pool ID of the node pool specifically created for Traefik.
+Description: Instance pool ID of the default node pool.
 
 ==== [[output_cluster_security_group_id]] <<output_cluster_security_group_id,cluster_security_group_id>>
 
@@ -421,8 +427,8 @@ Description: Raw `.kube/config` file for `kubectl` access.
 [cols="a,a",options="header,autowidth"]
 |===
 |Name |Version
-|[[provider_local]] <<provider_local,local>> |n/a
 |[[provider_exoscale]] <<provider_exoscale,exoscale>> |>= 0.49
+|[[provider_local]] <<provider_local,local>> |n/a
 |===
 
 = Resources
@@ -529,22 +535,20 @@ map(object({
 |`null`
 |no
 
-|[[input_router_nodepool]] <<input_router_nodepool,router_nodepool>>
-|Configuration of the router node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*
+|[[input_default_nodepool]] <<input_default_nodepool,default_nodepool>>
+|Configuration of the default node pool. The defaults of this variable are sensible and rarely need to be changed. *The variable is mainly used to change the size of the node pool when doing cluster upgrades.*
 |
 
 [source]
 ----
 object({
-    size            = number
-    instance_type   = string
-    instance_prefix = optional(string, "router")
-    disk_size       = optional(number, 20)
-    labels          = optional(map(string), {})
-    taints = optional(map(string), {
-      nodepool = "router:NoSchedule"
-    })
-    private_network_ids = optional(list(string), [])
+    size                = number
+    instance_type       = string
+    instance_prefix     = optional(string, "default")
+    disk_size           = optional(number, 20)
+    labels              = optional(map(string), {})
+    taints              = optional(map(string), {})
+    private_network_ids = optional(list(string), null)
   })
 ----
 
@@ -596,6 +600,12 @@ object({
 |`false`
 |no
 
+|[[input_enable_csi_driver]] <<input_enable_csi_driver,enable_csi_driver>>
+|Enable the creation of the Exoscale CSI driver.
+|`bool`
+|`false`
+|no
+
 |===
 
 = Outputs
@@ -608,8 +618,8 @@ object({
 |[[output_cluster_id]] <<output_cluster_id,cluster_id>> |ID of the SKS cluster.
 |[[output_nlb_ip_address]] <<output_nlb_ip_address,nlb_ip_address>> |IP address of the Network Load Balancer.
 |[[output_nlb_id]] <<output_nlb_id,nlb_id>> |ID of the Network Load Balancer.
-|[[output_router_nodepool_id]] <<output_router_nodepool_id,router_nodepool_id>> |ID of the node pool specifically created for Traefik.
-|[[output_router_instance_pool_id]] <<output_router_instance_pool_id,router_instance_pool_id>> |Instance pool ID of the node pool specifically created for Traefik.
+|[[output_default_nodepool_id]] <<output_default_nodepool_id,default_nodepool_id>> |ID of the default node pool.
+|[[output_default_instance_pool_id]] <<output_default_instance_pool_id,default_instance_pool_id>> |Instance pool ID of the default node pool.
 |[[output_cluster_security_group_id]] <<output_cluster_security_group_id,cluster_security_group_id>> |Security group ID attached to the SKS nodepool instances.
 |[[output_kubernetes_host]] <<output_kubernetes_host,kubernetes_host>> |Endpoint for your Kubernetes API server.
 |[[output_kubernetes_cluster_ca_certificate]] <<output_kubernetes_cluster_ca_certificate,kubernetes_cluster_ca_certificate>> |Certificate Authority required to communicate with the cluster.

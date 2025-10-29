@@ -23,14 +23,14 @@ output "nlb_id" {
   value       = resource.exoscale_nlb.this.id
 }
 
-output "router_nodepool_id" {
-  description = "ID of the node pool specifically created for Traefik."
-  value       = resource.exoscale_sks_nodepool.this[local.router_nodepool].id
+output "default_nodepool_id" {
+  description = "ID of the default node pool."
+  value       = resource.exoscale_sks_nodepool.this[local.default_nodepool_name].id
 }
 
-output "router_instance_pool_id" {
-  description = "Instance pool ID of the node pool specifically created for Traefik."
-  value       = resource.exoscale_sks_nodepool.this[local.router_nodepool].instance_pool_id
+output "default_instance_pool_id" {
+  description = "Instance pool ID of the default node pool."
+  value       = resource.exoscale_sks_nodepool.this[local.default_nodepool_name].instance_pool_id
 }
 
 output "cluster_security_group_id" {
